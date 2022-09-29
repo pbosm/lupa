@@ -58,22 +58,29 @@ require_once "./database/conn.php";
         $email     = $conn->escape_string(trim($_POST['email']));
         $data      = $conn->escape_string(trim($_POST['data']));
 
+        $erros = [];
 
         if(empty($nome)){
-            echo "Campo Nome vazio!!!<br><button><a href='clientes.php'>Voltar</button>"; 
-        }elseif(empty($cpf)) {
-            echo "Campo CPF vazio!!!<br><button><a href='clientes.php'>Voltar</button>";
-        }elseif(empty($email)) {
-            echo "Campo E-mail vazio!!!<br><button><a href='clientes.php'>Voltar</button>";
-        }elseif(empty($data)) {
-            echo "Campo Data vazio!!!<br><button><a href='clientes.php'>Voltar</button>";
-        }elseif(ValidaEmail($email) == true){
-            echo "Email invalido!!!!<button><a href='clientes.php'>Voltar</button>";
-        }elseif(VerificarEmail($conn, $email)){
-            
+            $erros[] =  "Campo Nome vazio!!!"; 
+        }if(empty($cpf)) {
+            $erros[] =  "Campo CPF vazio!!!";
+        }if(empty($email)) {
+            $erros[] =  "Campo E-mail vazio!!!";
+        }if(empty($data)) {
+            $erros[] =  "Campo Data vazio!!!";
+        }if(ValidaEmail($email) == true){
+            $erros[] =  "Email invalido!!!!";
+        }if(VerificarEmail($conn, $email)){
+            $erros[] = "";
         }elseif(ValidaCpf($cpf) == false) {
-            echo "CPF cadastrado invalido!!!!<button><a href='clientes.php'>Voltar</button>";
-        }else {
+            $erros[] =  "CPF cadastrado invalido!!!!";
+        }
+
+        if(!empty($erros)) {
+            foreach ($erros as $erro) {
+                echo "$erro <a href='clientes.php'>Voltar</a><br><br>";
+            }
+        } else {
 
         $sql = "INSERT clientes values (null, '$nome', '$cpf', '$email', '$data')";
         $conn->query($sql);
